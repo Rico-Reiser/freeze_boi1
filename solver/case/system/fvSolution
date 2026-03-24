@@ -1,0 +1,172 @@
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      fvSolution;
+}
+
+solvers
+{
+    // ===============================
+    // Phase fractions
+    // ===============================
+    "alpha.*"
+    {
+        nAlphaSubCycles 1;
+        cAlpha          0;
+    }
+
+    // ===============================
+    // Pressure
+    // ===============================
+    p_rgh
+    {
+        solver          GAMG;
+        tolerance       1e-7;
+        relTol          0.05;
+
+        smoother        GaussSeidel;
+
+        // smoother stability
+        agglomerator    faceAreaPair;
+        mergeLevels     1;
+    }
+
+    p_rghFinal
+    {
+        solver          GAMG;
+        tolerance       1e-8;
+        relTol          0;
+
+        smoother        GaussSeidel;
+        agglomerator    faceAreaPair;
+        mergeLevels     1;
+    }
+
+
+    // ===============================
+    // Velocity
+    // ===============================
+    U
+    {
+        solver          smoothSolver;
+        smoother        GaussSeidel;
+        tolerance       1e-10;
+        relTol          0;
+        nSweeps         3;      
+    }
+
+    UFinal
+    {
+        solver          smoothSolver;
+        smoother        GaussSeidel;
+        tolerance       1e-8;
+        relTol          0;
+        nSweeps         3;
+    }
+
+    // ===============================
+    // Enthalpy
+    // ===============================
+    // --- Luft
+    h.air
+    {
+        solver          smoothSolver;
+        smoother        GaussSeidel;
+        tolerance       1e-9;
+        relTol          0.1;
+        nSweeps         1;
+    }
+
+    h.airFinal
+    {
+        solver          smoothSolver;
+        smoother        GaussSeidel;
+        tolerance       1e-9;
+        relTol          0;
+        nSweeps         1;
+    }
+
+    // --- Kontaktfluid
+    h.contactFluid
+    {
+        solver          smoothSolver;
+        smoother        GaussSeidel;
+        tolerance       1e-9;
+        relTol          0.1;
+        nSweeps         1;
+    }
+
+    h.contactFluidFinal
+    {
+        solver          smoothSolver;
+        smoother        GaussSeidel;
+        tolerance       1e-9;
+        relTol          0;
+        nSweeps         1;
+    }
+
+    // --- Wasser (kritisch wegen Phasenwechsel!)
+    h.water
+    {
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+        tolerance       1e-9;
+        relTol          0.05;   // strenger
+        nSweeps         2;
+    }
+
+    h.waterFinal
+    {
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+        tolerance       1e-9;
+        relTol          0;
+        nSweeps         2;
+    }
+    // ===============================
+    // Solid fraction (NO solver!)
+    // ===============================
+    // fs wird NICHT gelöst
+    // → Kein fs-Block notwendig!
+    pcorr
+    {
+    solver          PCG;
+    preconditioner  DIC;
+    tolerance       1e-06;
+    relTol          0;
+    }
+
+    pcorrFinal
+    {
+    $pcorr;   // Verweise einfach auf oben
+    }
+}
+
+PIMPLE
+{
+    nCorrectors                  2;
+    nNonOrthogonalCorrectors     0;
+    nOuterCorrectors             1;
+
+    // closed box
+    pRefCell     0;
+    pRefValue    0;
+
+}
+
+relaxationFactors
+{
+    fields
+    {
+        p_rgh      0.3;
+    }
+
+    equations
+    {
+        U          0.7;
+        h.air              0.3;
+        h.contactFluid     0.3;
+        h.water            0.3;
+    }
+}

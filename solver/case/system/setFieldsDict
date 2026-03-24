@@ -1,0 +1,96 @@
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      setFieldsDict;
+}
+
+defaultFieldValues
+(
+    // -------------------------------------------------
+    // Hintergrund: Luft
+    // -------------------------------------------------
+    volScalarFieldValue alpha.air           1
+    volScalarFieldValue alpha.water         0
+    volScalarFieldValue alpha.contactFluid  0
+
+    // Enthalpie der Luft (T = 290 K)
+    // hA = cpA * (T - Tref)
+    //    = 1005 * (290 - 273.65) = 16432 J/kg
+    volScalarFieldValue h.air               16432
+
+    // andere Phasen existieren hier nicht
+    volScalarFieldValue h.water             0
+    volScalarFieldValue h.contactFluid      0
+
+    volVectorFieldValue U (0 0 0)
+);
+
+regions
+(
+    // =================================================
+    // 0) Explizit Luft oben (optional, zur Klarheit)
+    // =================================================
+    boxToCell
+    {
+        box (-0.015 -0.0005 0.002) (0.015 0.0005 0.005);
+
+        fieldValues
+        (
+            volScalarFieldValue alpha.air           1
+            volScalarFieldValue alpha.water         0
+            volScalarFieldValue alpha.contactFluid  0
+
+            volScalarFieldValue h.air               16432
+            volScalarFieldValue h.water             0
+            volScalarFieldValue h.contactFluid      0
+        );
+    }
+
+    // =================================================
+    // 1) CONTACT FLUID (unten)
+    // z = 0 … 0.0005 m
+    // =================================================
+    boxToCell
+    {
+        box (-0.015 -0.0005 0.0) (0.015 0.0005 0.0005);
+
+        fieldValues
+        (
+            volScalarFieldValue alpha.contactFluid  1
+            volScalarFieldValue alpha.water         0
+            volScalarFieldValue alpha.air           0
+
+            // hC = cpC * (290 - 273.65)
+            //     = 2500 * 16.35 = 40875 J/kg
+            volScalarFieldValue h.contactFluid      40875
+
+            volScalarFieldValue h.air               0
+            volScalarFieldValue h.water             0
+        );
+    }
+
+    // =================================================
+    // 2) WASSER (direkt darüber)
+    // z = 0.0005 … 0.002 m
+    // =================================================
+    boxToCell
+    {
+        box (-0.015 -0.0005 0.0005) (0.015 0.0005 0.002);
+
+        fieldValues
+        (
+            volScalarFieldValue alpha.water         1
+            volScalarFieldValue alpha.contactFluid  0
+            volScalarFieldValue alpha.air           0
+
+            // hW = cpW * (290 - 273.65)
+            //     = 4180 * 16.35 = 68343 J/kg
+            volScalarFieldValue h.water             68343
+
+            volScalarFieldValue h.air               0
+            volScalarFieldValue h.contactFluid      0
+        );
+    }
+);

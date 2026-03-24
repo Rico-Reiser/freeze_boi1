@@ -1,0 +1,17 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      phaseProperties;
+}
+
+phases (water contactFluid air);
+
+// OF10: List of (phasePair) scalar
+sigmas
+(
+    (water contactFluid) 0.030
+    (water air)          0.072
+    (contactFluid air)   0.020
+);

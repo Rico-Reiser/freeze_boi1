@@ -1,0 +1,20 @@
+<<<<<<< HEAD
+# Build
+Make/linux*
+*.dep
+*.o
+
+# Logs / temporär
+*.log
+*.out
+
+# OpenFOAM cases (falls später drin)
+processor*
+[0-9]*
+=======
+[0-9]*
+processor*
+log.*
+*.foam
+!0.orig/
+>>>>>>> b3c2b52f651d01ac5fabe283912c07e7842dec5a

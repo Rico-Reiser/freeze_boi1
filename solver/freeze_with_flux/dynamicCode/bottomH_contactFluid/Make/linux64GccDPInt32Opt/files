@@ -1,0 +1,6 @@
+# dynamicCode:
+# SHA1 = 37b880cfc9e5a591b014429d4f95d32c30ca8d78
+
+SOURCE += codedFixedValueFvPatchFieldTemplate.C
+
+LIB = $(PWD)/../platforms/$(WM_OPTIONS)/lib/libbottomH_contactFluid_37b880cfc9e5a591b014429d4f95d32c30ca8d78

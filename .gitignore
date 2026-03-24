@@ -1,0 +1,13 @@
+# OpenFOAM
+processor*
+[0-9]*
+*.log
+postProcessing/
+
+# Build
+Make/linux*
+*.dep
+*.o
+
+# Sonstiges
+*.foam
